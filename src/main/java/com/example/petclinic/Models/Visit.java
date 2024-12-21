@@ -1,18 +1,18 @@
 package com.example.petclinic.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 public class Visit {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String date;
+    private String description;
 
     @ManyToOne
+    @JoinColumn(name = "pet_id")
     private Pet pet;
-
-    private String visitDate;
 
     // Getters and Setters
 }

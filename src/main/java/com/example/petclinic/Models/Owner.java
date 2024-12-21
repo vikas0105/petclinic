@@ -1,19 +1,14 @@
 package com.example.petclinic.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import java.util.List;
+import javax.persistence.*;
 
 @Entity
 public class Owner {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstName;
-    private String lastName;
-    
-    @OneToMany
-    private List<Pet> pets;
+    private String name;
+    private String phone;
 
     // Getters and Setters
 }
