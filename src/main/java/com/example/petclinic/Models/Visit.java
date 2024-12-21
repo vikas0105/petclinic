@@ -8,18 +8,16 @@ public class Visit {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private Long id;  // Visit ID
 
     private Date date;
-
     private String description;
 
     @ManyToOne
     @JoinColumn(name = "pet_id")
-    private Pet pet;
+    private Pet pet;  // Pet associated with this visit
 
     // Getters and Setters
-
     public Long getId() {
         return id;
     }
@@ -52,11 +50,11 @@ public class Visit {
         this.pet = pet;
     }
 
-    // This method is needed to set the petId directly
+    // Add setPetId method to set the pet's id
     public void setPetId(Long petId) {
         if (this.pet == null) {
             this.pet = new Pet();  // Ensure pet is initialized if null
         }
-        this.pet.setId(petId);  // Assuming Pet class has setId method
+        this.pet.setId(petId);  // Set the pet's ID
     }
 }
