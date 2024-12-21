@@ -1,18 +1,24 @@
-package com.yourproject.model;
+package com.example.petclinic.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.Set;
 
 @Entity
 public class Owner {
 
     @Id
     private Long id;
-
-    private String firstName; // New field added
+    
+    private String firstName;
     private String lastName;
 
-    // Getters and Setters for all fields
+    @OneToMany(mappedBy = "owner")
+    private Set<Pet> pets;
+
+    // Getters and Setters
+
     public Long getId() {
         return id;
     }
@@ -35,5 +41,13 @@ public class Owner {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Set<Pet> getPets() {
+        return pets;
+    }
+
+    public void setPets(Set<Pet> pets) {
+        this.pets = pets;
     }
 }

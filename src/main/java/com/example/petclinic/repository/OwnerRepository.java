@@ -1,8 +1,8 @@
-package com.yourproject.repository;
+package com.example.petclinic.repository;
 
-import com.yourproject.model.Owner;
+import com.example.petclinic.model.Owner;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OwnerRepository extends JpaRepository<Owner, Long> {
-    // You can add custom queries here if needed, but no changes necessary for the firstName field.
+    // Custom query methods can be added here
 }
