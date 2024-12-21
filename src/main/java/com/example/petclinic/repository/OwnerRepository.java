@@ -1,11 +1,8 @@
-package com.example.petclinic.repository;
+package com.yourproject.repository;
 
-import com.example.petclinic.model.Owner;
+import com.yourproject.model.Owner;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import java.util.List;
 
-@Repository
 public interface OwnerRepository extends JpaRepository<Owner, Long> {
-    List<Owner> findByFirstNameContaining(String firstName);
+    // You can add custom queries here if needed, but no changes necessary for the firstName field.
 }

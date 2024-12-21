@@ -1,20 +1,18 @@
-package com.example.petclinic.model;
+package com.yourproject.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Entity
 public class Owner {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String firstName; // New field added
+    private String lastName;
 
-    // Getters and setters
+    // Getters and Setters for all fields
     public Long getId() {
         return id;
     }
@@ -23,11 +21,19 @@ public class Owner {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }
