@@ -1,15 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Owners</title>
 </head>
 <body>
     <h1>List of Owners</h1>
     <ul>
         <li th:each="owner : ${owners}">
-            <span th:text="${owner.name}"></span>
+            <span th:text="${owner.firstName} + ' ' + ${owner.lastName}"></span>
         </li>
     </ul>
 </body>

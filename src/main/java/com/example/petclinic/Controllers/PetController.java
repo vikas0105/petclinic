@@ -1,21 +1,16 @@
 package com.example.petclinic.controller;
 
-import com.example.petclinic.model.Pet;
-import com.example.petclinic.repository.PetRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
-
-@RestController
-@RequestMapping("/pets")
+@Controller
 public class PetController {
 
-    @Autowired
-    private PetRepository petRepository;
-
-    @GetMapping("/search")
-    public List<Pet> searchPets(@RequestParam String name) {
-        return petRepository.findByNameContaining(name);
+    @GetMapping("/pets")
+    public String getAllPets(Model model) {
+        // Logic to retrieve and display pets
+        // Example: model.addAttribute("pets", petService.findAll());
+        return "pets";  // Will render pets.html
     }
 }
