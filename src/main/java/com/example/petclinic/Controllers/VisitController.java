@@ -1,11 +1,14 @@
-package com.example.petclinic.controller;
+package com.example.petclinic.Controllers;
 
 import com.example.petclinic.model.Visit;
+import com.example.petclinic.repository.PetRepository;
 import com.example.petclinic.repository.VisitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class VisitController {
@@ -13,18 +16,22 @@ public class VisitController {
     @Autowired
     private VisitRepository visitRepository;
 
-    @GetMapping("/pets/{petId}/visits/new")
-    public String showAddVisitForm(@PathVariable Long petId, Model model) {
+    @Autowired
+    private PetRepository petRepository;
+
+    // This method initializes the form for creating a new visit, and sets the petId for the visit.
+    @GetMapping("/visits/new")
+    public String initCreationForm(@RequestParam("petId") Long petId, Model model) {
         Visit visit = new Visit();
-        visit.setPetId(petId);  // Set the pet ID for the visit
+        visit.setPetId(petId);  // Set the petId for the visit object
         model.addAttribute("visit", visit);
-        return "addVisit";
+        return "createOrUpdateVisitForm";  // Make sure this HTML form exists
     }
 
-    @PostMapping("/pets/{petId}/visits")
-    public String addVisit(@PathVariable Long petId, @ModelAttribute Visit visit) {
-        visit.setPetId(petId);
+    // This method processes the form submission and saves the visit.
+    @PostMapping("/visits/new")
+    public String processCreationForm(Visit visit) {
         visitRepository.save(visit);
-        return "redirect:/pets/" + petId;
+        return "redirect:/pets/{petId}";  // Redirect after saving the visit
     }
 }
