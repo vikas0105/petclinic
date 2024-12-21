@@ -6,62 +6,39 @@
 
     <groupId>com.example</groupId>
     <artifactId>petclinic</artifactId>
-    <version>1.0.0</version>
-    <packaging>jar</packaging>
-
-    <name>Pet Clinic</name>
-    <description>Pet Clinic Application</description>
-
+    <version>0.0.1-SNAPSHOT</version>
+    <name>PetClinic</name>
+    <description>Spring Boot PetClinic application</description>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.5</version> <!-- Use the appropriate version of Spring Boot -->
+        <version>2.7.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-
     <properties>
-        <java.version>11</java.version>
-        <spring-boot.version>2.7.5</spring-boot.version>
+        <java.version>17</java.version>
     </properties>
-
     <dependencies>
-        <!-- Spring Boot Web Starter -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- Spring Boot Data JPA (for handling persistence with Jakarta Persistence) -->
+        <!-- Spring Boot dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-
-        <!-- Spring Boot Thymeleaf Starter (for HTML templates) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
-        <!-- Jakarta Persistence API (for JPA annotations) -->
-        <dependency>
-            <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
-            <version>3.1.0</version> <!-- Use the version that suits your project -->
-        </dependency>
-
-        <!-- Hibernate ORM (JPA implementation) -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>5.6.9.Final</version> <!-- Adjust to the appropriate Hibernate version -->
-        </dependency>
-
-        <!-- H2 Database for testing (replace with your database) -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- Jakarta Persistence API dependency -->
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>2.2.3</version>
         </dependency>
 
         <!-- Spring Boot DevTools for hot reloading during development -->
@@ -70,34 +47,14 @@
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
         </dependency>
-
-        <!-- Spring Boot Test for unit and integration testing -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-
-            <!-- Maven Compiler Plugin to specify Java version -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-
 </project>
