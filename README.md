@@ -1,19 +1,53 @@
+install on ec2
 ### Install Java 17 & Maven on EC2 (Ubuntu)
 Run the following commands to install Java 17 and Maven on your EC2 instance:
 
-```bash
-# Update package index
+#!/bin/bash
+
+# Update the package list
+echo "Updating package list..."
 sudo apt update
 
-# Install OpenJDK 17
-sudo apt install openjdk-17-jdk -y
+# Install OpenJDK 11 (or another version if needed)
+echo "Installing OpenJDK 11..."
+sudo apt install -y openjdk-11-jdk
+
+# Verify Java installation
+echo "Verifying Java installation..."
+java -version
 
 # Install Maven
-sudo apt install maven -y
+echo "Installing Maven..."
+sudo apt install -y maven
 
-# Verify installation
-java -version
+# Verify Maven installation
+echo "Verifying Maven installation..."
 mvn -version
+
+# Set JAVA_HOME environment variable
+echo "Setting up JAVA_HOME..."
+JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+echo "JAVA_HOME=${JAVA_HOME}" | sudo tee -a /etc/environment
+
+# Set MAVEN_HOME environment variable
+echo "Setting up MAVEN_HOME..."
+MAVEN_HOME=/usr/share/maven
+echo "MAVEN_HOME=${MAVEN_HOME}" | sudo tee -a /etc/environment
+
+# Reload environment variables
+source /etc/environment
+
+# Confirm environment variables
+echo "Verifying environment variables..."
+echo "JAVA_HOME=${JAVA_HOME}"
+echo "MAVEN_HOME=${MAVEN_HOME}"
+
+# Clean up unnecessary packages
+echo "Cleaning up unnecessary packages..."
+sudo apt autoremove -y
+
+echo "Java and Maven installation completed successfully!"
+
 ===============================================================================================================
 mvn clean install : it will build the app
 mvn spring-boot:run : this would run the jar file
