@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pets</title>
+    <title>Owners</title>
 </head>
 <body>
-    <h1>List of Pets</h1>
+    <h1>List of Owners</h1>
     <ul>
-        <li th:each="pet : ${pets}">
-            <span th:text="${pet.name}"></span>
+        <li th:each="owner : ${owners}">
+            <span th:text="${owner.name}"></span>
         </li>
     </ul>
 </body>

@@ -1,8 +1,7 @@
 package com.example.petclinic.repository;
 
 import com.example.petclinic.model.Visit;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
-public interface VisitRepository extends JpaRepository<Visit, Long> {
-    // You can define custom queries here if needed
+public interface VisitRepository extends CrudRepository<Visit, Long> {
 }

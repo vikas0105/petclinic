@@ -1,9 +1,9 @@
 package com.example.petclinic.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 
 @Entity
 public class Visit {
@@ -12,17 +12,9 @@ public class Visit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String description;
+    private String date;
 
-    // Other fields, constructors, getters, and setters
-
-    public Visit() {
-    }
-
-    public Visit(String description) {
-        this.description = description;
-    }
-
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -31,11 +23,11 @@ public class Visit {
         this.id = id;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDate() {
+        return date;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDate(String date) {
+        this.date = date;
     }
 }
