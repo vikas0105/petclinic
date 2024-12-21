@@ -8,7 +8,7 @@
     <artifactId>petclinic</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>PetClinic</name>
-    <description>Pet Clinic Application</description>
+    <description>PetClinic Sample Application</description>
     <packaging>jar</packaging>
 
     <parent>
@@ -19,67 +19,88 @@
     </parent>
 
     <properties>
-        <java.version>17</java.version> <!-- Set Java version -->
-        <spring-boot.version>3.0.1</spring-boot.version> <!-- Spring Boot version -->
+        <java.version>17</java.version>
+        <spring-boot.version>3.0.1</spring-boot.version>
+        <spring-framework.version>6.0.5</spring-framework.version>
     </properties>
 
     <dependencies>
-        <!-- Spring Boot Starter Web -->
+        <!-- Spring Boot Web Starter (includes Spring MVC) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- Spring Boot Starter Thymeleaf for templates -->
+        <!-- Thymeleaf (for rendering HTML templates) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-        <!-- Spring Boot Starter Data JPA for database support -->
+        <!-- Spring Data JPA (for database interactions) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-        <!-- H2 Database for in-memory database support -->
+        <!-- H2 Database (in-memory database for testing purposes) -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Spring Boot Starter Test for testing -->
+        <!-- Spring Boot DevTools (for automatic restarts and debugging during development) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Spring Boot Actuator (for monitoring and management of your application) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Bootstrap CSS for styling the application -->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>5.3.0</version>
+        </dependency>
+
+        <!-- Spring Boot Test (for unit and integration tests) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!-- Spring Boot DevTools for automatic restarts (optional) -->
+        <!-- Spring Boot Starter Logging (includes Logback for logging) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
+            <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Maven Compiler Plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <release>17</release> <!-- Ensure Java 17 is used -->
-                </configuration>
-            </plugin>
-
-            <!-- Spring Boot Maven Plugin for running and building the app -->
+            <!-- Spring Boot Maven Plugin (for building and running the application) -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- Maven Compiler Plugin (to set Java version for compilation) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

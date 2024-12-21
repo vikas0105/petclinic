@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Pet Clinic</title>
+    <meta charset="UTF-8">
+    <title>Welcome to PetClinic</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Welcome to the Pet Clinic</h1>
-    <ul>
-        <li><a href="/pets">Pets</a></li>
-        <li><a href="/owners">Owners</a></li>
-    </ul>
+    <div class="container">
+        <h1>Welcome to PetClinic!</h1>
+        <a class="btn btn-primary" href="/pets">View Pets</a>
+        <a class="btn btn-primary" href="/owners">View Owners</a>
+        <a class="btn btn-secondary" href="/search">Search</a>
+    </div>
 </body>
 </html>

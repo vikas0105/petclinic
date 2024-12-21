@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Details</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Pet Details</h2>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ pet.name }}</h5>
+                <p class="card-text"><strong>Type:</strong> {{ pet.type }}</p>
+                <p class="card-text"><strong>Owner:</strong> {{ pet.owner.firstName }} {{ pet.owner.lastName }}</p>
+                
+                <!-- Add visit details if applicable -->
+                <h6>Visits:</h6>
+                <ul>
+                    <li th:each="visit : ${pet.visits}">
+                        <p><strong>Date:</strong> <span th:text="${visit.date}"></span></p>
+                        <p><strong>Description:</strong> <span th:text="${visit.description}"></span></p>
+                    </li>
+                </ul>
+                
+                <a href="/pets" class="btn btn-primary">Back to Pets</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
