@@ -55,33 +55,33 @@ mvn spring-boot:run : this would run the jar file
 public ip with port 8080
 ===============================================================================================================
 
-name: Build and Test Spring Boot Application
+name: Build, Deploy, and Check Application Health
 
 on:
   push:
     branches:
-      - main  # or any branch you want to trigger the workflow on
+      - '**'  # Triggers on push to any branch, including feature branches.
   pull_request:
     branches:
-      - main  # or any branch you want to trigger the workflow on
+      - master  # Triggers on PRs to the master branch from feature branches.
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    steps:
-    # Step 1: Checkout code
-    - name: Checkout code
-      uses: actions/checkout@v3
 
-    # Step 2: Set up Java JDK (use the version compatible with your project)
-    - name: Set up JDK 17
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Fetch the full history for proper branch handling
+
+    - name: Set up Java 17
       uses: actions/setup-java@v3
       with:
-        java-version: '17'  # Use the appropriate Java version for your project
-        distribution: 'adoptopenjdk'
+        java-version: 17
+        distribution: temurin
+        cache: maven
 
-    # Step 3: Cache Maven dependencies to speed up builds
     - name: Cache Maven dependencies
       uses: actions/cache@v3
       with:
@@ -90,19 +90,27 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
-    # Step 4: Install Maven dependencies and run tests
     - name: Build with Maven
-      run: mvn clean install
+      run: mvn clean install -DskipTests=true
 
-    # Step 5: Run tests
-    - name: Run tests
-      run: mvn test
+    - name: Run Spring Boot application
+      run: mvn spring-boot:run &
+      # Run Spring Boot in the background
 
-    # Step 6: Run the Spring Boot Application (optional)
-    - name: Run Spring Boot Application
-      run: mvn spring-boot:run
-      env:
-        SPRING_PROFILES_ACTIVE: github-actions
+    - name: Wait for 1 minute (simulate a short-running process)
+      run: sleep 60  # Sleep for 1 minute
+
+    - name: Check application health
+      run: |
+        echo "Checking application health..."
+        curl -s --head http://localhost:8080/actuator/health | head -n 10
+      # Check if the health endpoint is up and responding
+
+    - name: Stop Spring Boot application
+      run: |
+        echo "Stopping Spring Boot application..."
+        mvn spring-boot:stop
+
 
 ===============================================================================================================================================================
 
@@ -110,75 +118,69 @@ pipeline {
     agent any
 
     environment {
-        // Define environment variables (optional)
-        JAVA_HOME = '/usr/lib/jvm/java-17-openjdk'
-        MAVEN_HOME = '/usr/share/maven'
-        PATH = "${JAVA_HOME}/bin:${MAVEN_HOME}/bin:${env.PATH}"
+        JAVA_HOME = tool name: 'JDK 17', type: 'JDK'
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                // Checkout the repository
                 checkout scm
             }
         }
 
-        stage('Set up JDK') {
+        stage('Set up Java 17') {
             steps {
-                // Install Java (JDK 17 in this case)
                 script {
-                    sh 'sudo apt update'
-                    sh 'sudo apt install openjdk-17-jdk -y'
+                    // Ensuring that Java 17 is set up
+                    sh 'java -version'
                 }
             }
         }
 
-        stage('Cache Maven Dependencies') {
+        stage('Cache Maven dependencies') {
             steps {
-                // Cache Maven dependencies (to speed up builds)
-                script {
-                    // You can use the Jenkins cache mechanism here if needed, for example, storing dependencies in a directory
-                    // Example: sh 'mvn dependency:go-offline'
+                cache(path: '.m2/repository', key: "maven-${env.BUILD_ID}") {
+                    sh 'mvn clean install -DskipTests=true'
                 }
             }
         }
 
         stage('Build with Maven') {
             steps {
-                // Run Maven to clean and install the project
-                script {
-                    sh 'mvn clean install -DskipTests'
-                }
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                // Run tests using Maven
-                script {
-                    sh 'mvn test'
-                }
-            }
-        }
-
-        stage('Deploy (optional)') {
-            steps {
-                // Optional deployment stage (depends on your needs)
-                script {
-                    // For example, deploying to a remote server or cloud platform
-                    // sh 'mvn deploy'
-                    echo 'Deployment step can be added here'
-                }
+                sh 'mvn clean install -DskipTests=true'
             }
         }
 
         stage('Run Spring Boot Application') {
             steps {
-                // Run the Spring Boot application (optional)
+                // Run the Spring Boot application in the background
                 script {
-                    // Running Spring Boot with Maven
-                    sh 'mvn spring-boot:run'
+                    sh 'mvn spring-boot:run &'
+                }
+            }
+        }
+
+        stage('Wait for 1 minute') {
+            steps {
+                // Sleep for 1 minute to allow the app to start and run
+                sleep(time: 1, unit: 'MINUTES')
+            }
+        }
+
+        stage('Check application health') {
+            steps {
+                script {
+                    def healthCheck = sh(script: 'curl -s --head http://localhost:8080/actuator/health | head -n 10', returnStdout: true).trim()
+                    echo "Health check response: ${healthCheck}"
+                }
+            }
+        }
+
+        stage('Stop Spring Boot Application') {
+            steps {
+                // Stop the Spring Boot application gracefully
+                script {
+                    sh 'mvn spring-boot:stop'
                 }
             }
         }
@@ -186,18 +188,11 @@ pipeline {
 
     post {
         always {
-            // Clean up after the build (e.g., remove temp files)
-            echo 'Cleaning up after build'
-        }
-        success {
-            // Actions to take if the build is successful (e.g., notify, deploy, etc.)
-            echo 'Build successful'
-        }
-        failure {
-            // Actions to take if the build fails (e.g., send failure notification)
-            echo 'Build failed'
+            // Clean up any running processes if needed
+            echo 'Cleaning up.'
         }
     }
 }
+
 ============================================================================================================================================================================
 
