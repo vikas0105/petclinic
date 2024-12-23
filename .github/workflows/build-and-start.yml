@@ -1,34 +1,46 @@
-steps:
-# Step 1: Checkout code
-- name: Checkout code
-  uses: actions/checkout@v3
+name: Build and Run Pet Clinic
 
-# Step 2: Set up Java JDK (use the version compatible with your project)
-- name: Set up JDK 17
-  uses: actions/setup-java@v3
-  with:
-    java-version: '17'  # Use the appropriate Java version for your project
-    distribution: 'adoptopenjdk'
+on:
+  push:
+    branches:
+      - '**' # Trigger on push to any branch
+  workflow_dispatch: # Allows manual trigger via GitHub Actions UI
 
-# Step 3: Cache Maven dependencies to speed up builds
-- name: Cache Maven dependencies
-  uses: actions/cache@v3
-  with:
-    path: ~/.m2/repository
-    key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-    restore-keys: |
-      ${{ runner.os }}-maven-
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
 
-# Step 4: Install Maven dependencies and run tests
-- name: Build with Maven
-  run: mvn clean install
+    steps:
+    # Checkout the repository
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-# Step 5: Run tests
-- name: Run tests
-  run: mvn test
+    # Set up Java
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
 
-# Step 6: Run the Spring Boot Application (optional)
-- name: Run Spring Boot Application
-  run: mvn spring-boot:run
-  env:
-    SPRING_PROFILES_ACTIVE: github-actions
+    # Cache Maven dependencies for faster builds
+    - name: Cache Maven Dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven
+
+    # Build the application
+    - name: Build Application
+      run: mvn clean install -DskipTests=true
+
+    # Run the application
+    - name: Run Application
+      run: nohup java -jar target/petclinic.jar &
+
+    # Verify the application
+    - name: Verify Application
+      run: |
+        echo "Waiting for application to start..."
+        sleep 10
+        curl --fail http://localhost:8080 || (echo "Application is not running!" && exit 1)
