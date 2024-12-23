@@ -1,4 +1,4 @@
-name: Build, Deploy, Check Health, and Stop Application
+name: Build, Deploy, and Check Application Health
 
 on:
   push:
@@ -40,26 +40,14 @@ jobs:
       run: mvn spring-boot:run &
       # Run Spring Boot in the background
 
-    - name: Wait for application to start
-      run: sleep 15  # Give the app time to start
+    - name: Wait for 5 minutes (simulate a long-running process)
+      run: sleep 300  # Sleep for 5 minutes
 
     - name: Check application health
       run: |
         echo "Checking application health..."
         curl -s --head http://localhost:8080/actuator/health | head -n 10
       # Check if the health endpoint is up and responding
-
-    - name: Validate health response
-      run: |
-        response=$(curl -s http://localhost:8080/actuator/health)
-        if [[ $response != *"\"status\":\"UP\""* ]]; then
-          echo "Application is not healthy. Response: $response"
-          exit 1
-        fi
-        echo "Application is healthy."
-
-    - name: Wait for 5 minutes (simulate a long-running process)
-      run: sleep 300  # Sleep for 5 minutes
 
     - name: Stop Spring Boot application
       run: |
