@@ -1,4 +1,4 @@
-name: Build and Deploy Petclinic
+name: Build, Deploy, Check Health, and Stop Application
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0  # Fetch the full history for proper branch handling
-      
+
     - name: Set up Java 17
       uses: actions/setup-java@v3
       with:
@@ -37,4 +37,31 @@ jobs:
       run: mvn clean install -DskipTests=true
 
     - name: Run Spring Boot application
-      run: mvn spring-boot:run
+      run: mvn spring-boot:run &
+      # Run Spring Boot in the background
+
+    - name: Wait for application to start
+      run: sleep 15  # Give the app time to start
+
+    - name: Check application health
+      run: |
+        echo "Checking application health..."
+        curl -s --head http://localhost:8080/actuator/health | head -n 10
+      # Check if the health endpoint is up and responding
+
+    - name: Validate health response
+      run: |
+        response=$(curl -s http://localhost:8080/actuator/health)
+        if [[ $response != *"\"status\":\"UP\""* ]]; then
+          echo "Application is not healthy. Response: $response"
+          exit 1
+        fi
+        echo "Application is healthy."
+
+    - name: Wait for 5 minutes (simulate a long-running process)
+      run: sleep 300  # Sleep for 5 minutes
+
+    - name: Stop Spring Boot application
+      run: |
+        echo "Stopping Spring Boot application..."
+        pkill -f 'java -jar'  # This will stop the Spring Boot application process based on the command used to run it.
