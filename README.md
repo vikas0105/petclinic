@@ -45,124 +45,135 @@ echo "Cleaning up unnecessary packages..."
 sudo apt autoremove -y
 
 echo "Java and Maven installation completed successfully!"
+
+mvn clean install : it will build the app
+
+mvn spring-boot:run : this would run the jar file
 =============================================================================================================================================================================
 http://ec2-ip:8080/petclinic/pets
 =============================================================================================================================================================================
-GH:
-name: Build and Start Spring Boot App
+steps:
+- name: Checkout the repository
+  uses: actions/checkout@v3
+  with:
+    fetch-depth: 0  # Fetch the full history for proper branch handling
 
-on:
-  push:
-    branches:
-      - main  # Trigger the pipeline on push to the main branch
-  pull_request:
-    branches:
-      - main  # Trigger the pipeline on PRs to the main branch
+- name: Set up Java 17
+  uses: actions/setup-java@v3
+  with:
+    java-version: 17
+    distribution: temurin
+    cache: maven
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    
-    steps:
-      # Step 1: Checkout the code
-      - name: Checkout repository
-        uses: actions/checkout@v2
+- name: Cache Maven dependencies
+  uses: actions/cache@v3
+  with:
+    path: ~/.m2/repository
+    key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+    restore-keys: |
+      ${{ runner.os }}-maven-
 
-      # Step 2: Set up Java JDK 17 (adjust if you're using a different version)
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'  # Update to match the Java version used in your project
-          distribution: 'adoptopenjdk'
+- name: Build with Maven
+  run: mvn clean install -DskipTests=true
 
-      # Step 3: Cache Maven dependencies
-      - name: Cache Maven dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+- name: Run Spring Boot application
+  run: mvn spring-boot:run &
+  # Run Spring Boot in the background
 
-      # Step 4: Build the Spring Boot application using Maven
-      - name: Build with Maven
-        run: mvn clean install -DskipTests=true
+- name: Wait for 1 minute (simulate a short-running process)
+  run: sleep 60  # Sleep for 1 minute
 
-      # Step 5: Start the Spring Boot application (in background)
-      - name: Start Spring Boot Application
-        run: |
-          nohup java -jar target/petclinic.jar &  # Start Spring Boot app in the background
-          
-      # Step 6: Check if the app is running (optional, just to confirm)
-      - name: Check if Spring Boot app is running
-        run: |
-          curl --silent --fail http://localhost:8080 || exit 1  # Check if the app is running on localhost
+- name: Check application health
+  run: |
+    echo "Checking application health..."
+    curl -s --head http://localhost:8080/actuator/health | head -n 10
+  # Check if the health endpoint is up and responding
+
+- name: Stop Spring Boot application
+  run: |
+    echo "Stopping Spring Boot application..."
+    mvn spring-boot:stop
 
 =========================================================================================================================================================================
 pipeline {
     agent any
 
     environment {
-        JAVA_HOME = tool name: 'JDK 17', type: 'JDK'  // Set the path for JDK 17
-        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+        JAVA_HOME = tool name: 'JDK 17', type: 'JDK'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from the repository
                 checkout scm
             }
         }
 
-        stage('Set up Maven') {
+        stage('Set up Java 17') {
             steps {
-                // Install Maven (assuming it's not already installed)
                 script {
-                    if (!fileExists('/usr/local/bin/mvn')) {
-                        sh 'sudo apt-get install maven -y'
-                    }
+                    // Ensuring that Java 17 is set up
+                    sh 'java -version'
                 }
             }
         }
 
-        stage('Build Application') {
+        stage('Cache Maven dependencies') {
             steps {
-                // Build the Spring Boot application without running tests
+                cache(path: '.m2/repository', key: "maven-${env.BUILD_ID}") {
+                    sh 'mvn clean install -DskipTests=true'
+                }
+            }
+        }
+
+        stage('Build with Maven') {
+            steps {
                 sh 'mvn clean install -DskipTests=true'
             }
         }
 
-        stage('Start Application') {
+        stage('Run Spring Boot Application') {
             steps {
-                // Start the Spring Boot application in the background
+                // Run the Spring Boot application in the background
                 script {
-                    sh 'nohup java -jar target/petclinic.jar &'
+                    sh 'mvn spring-boot:run &'
                 }
             }
         }
 
-        stage('Verify Application') {
+        stage('Wait for 1 minute') {
             steps {
-                // Verify if the application is running
+                // Sleep for 1 minute to allow the app to start and run
+                sleep(time: 1, unit: 'MINUTES')
+            }
+        }
+
+        stage('Check application health') {
+            steps {
                 script {
-                    def response = sh(script: 'curl --silent --fail http://localhost:8080', returnStatus: true)
-                    if (response != 0) {
-                        error 'Application is not running!'
-                    }
+                    def healthCheck = sh(script: 'curl -s --head http://localhost:8080/actuator/health | head -n 10', returnStdout: true).trim()
+                    echo "Health check response: ${healthCheck}"
+                }
+            }
+        }
+
+        stage('Stop Spring Boot Application') {
+            steps {
+                // Stop the Spring Boot application gracefully
+                script {
+                    sh 'mvn spring-boot:stop'
                 }
             }
         }
     }
 
     post {
-        success {
-            echo 'Build and start process completed successfully.'
-        }
-        failure {
-            echo 'Build or start process failed.'
+        always {
+            // Clean up any running processes if needed
+            echo 'Cleaning up.'
         }
     }
 }
+
 ============================================================================================================================================================================
 
