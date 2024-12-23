@@ -56,7 +56,7 @@ mvn spring-boot:run : this would run the jar file
 public ip with port 8080
 ===============================================================================================================
 
-[![Build, Deploy, and Check Application Health](https://github.com/vikas0105/petclinic/actions/workflows/Build-&-Deploy.yml/badge.svg?event=deployment)](https://github.com/vikas0105/petclinic/actions/workflows/Build-&-Deploy.yml)
+[![Build, Deploy, and Check Application Health](https://github.com/vikas0105/petclinic/actions/workflows/Build-&-Deploy.yml/badge.svg?event=status)](https://github.com/vikas0105/petclinic/actions/workflows/Build-&-Deploy.yml)
 
 name: Build, Deploy, and Check Application Health
 
