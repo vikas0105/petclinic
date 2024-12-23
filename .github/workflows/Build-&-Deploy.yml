@@ -41,7 +41,7 @@ jobs:
       # Run Spring Boot in the background
 
     - name: Wait for 5 minutes (simulate a long-running process)
-      run: sleep 300  # Sleep for 5 minutes
+      run: sleep 60  # Sleep for 5 minutes
 
     - name: Check application health
       run: |
