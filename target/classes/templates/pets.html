@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pets</title>
+</head>
+<body>
+    <h1>Pets</h1>
+    <a href="/addPet">Add New Pet</a>
+    <ul>
+        <li th:each="pet : ${pets}" th:text="${pet.name}"></li>
+    </ul>
+</body>
+</html>
