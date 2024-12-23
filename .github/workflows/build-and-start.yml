@@ -41,7 +41,7 @@ jobs:
       # Build with Maven (skip tests for faster build, you can change it later)
       - name: Build with Maven
         run: mvn clean install -DskipTests=true
-        working-directory: ./petclinic  # Change if necessary to where the pom.xml is located
+        working-directory: ./petclinic  # Change to the correct directory where your pom.xml file is located
 
       # Example of using curl: Fetch a resource (e.g., download a file or call an API)
       - name: Use curl to download a file
