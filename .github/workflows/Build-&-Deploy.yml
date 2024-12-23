@@ -52,4 +52,4 @@ jobs:
     - name: Stop Spring Boot application
       run: |
         echo "Stopping Spring Boot application..."
-        pkill -f 'java -jar' || true  # This ensures the build doesn't fail if the process is not found
+        mvn spring-boot:stop
