@@ -60,8 +60,3 @@ jobs:
       with:
         name: petclinic-artifacts
         path: target/*.jar  # Path to your build artifacts (adjust if necessary)
-
-    - name: Provide Artifact Download Link
-      run: |
-        echo "Artifact uploaded. You can download it from the following link:"
-        echo "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
