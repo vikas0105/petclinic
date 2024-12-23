@@ -40,8 +40,8 @@ jobs:
       run: mvn spring-boot:run &
       # Run Spring Boot in the background
 
-    - name: Wait for 5 minutes (simulate a long-running process)
-      run: sleep 60  # Sleep for 5 minutes
+    - name: Wait for 1 minute (simulate a short-running process)
+      run: sleep 60  # Sleep for 1 minute
 
     - name: Check application health
       run: |
@@ -52,4 +52,4 @@ jobs:
     - name: Stop Spring Boot application
       run: |
         echo "Stopping Spring Boot application..."
-        pkill -f 'java -jar'  # This will stop the Spring Boot application process based on the command used to run it.
+        pkill -f 'java -jar' || true  # This ensures the build doesn't fail if the process is not found
