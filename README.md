@@ -52,6 +52,7 @@ echo "Java and Maven installation completed successfully!"
 mvn clean install : it will build the app
 mvn spring-boot:run : this would run the jar file
 
+public ip with port 8080
 ===============================================================================================================
 
 name: Build and Test Spring Boot Application
