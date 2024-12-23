@@ -18,7 +18,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '17'
-        distribution: 'temurin' # Specify JDK distribution
+        distribution: 'temurin'
 
     - name: Cache Maven Dependencies
       uses: actions/cache@v3
@@ -30,9 +30,11 @@ jobs:
 
     - name: Build Application
       run: mvn clean install -DskipTests=true
+      working-directory: ./petclinic # Ensure you specify the correct subdirectory
 
     - name: Run Application
       run: nohup java -jar target/petclinic.jar &
+      working-directory: ./petclinic # Specify the same subdirectory as above
 
     - name: Verify Application
       run: |
