@@ -58,15 +58,16 @@ public ip with port 8080
 
 [![Build, Deploy, and Check Application Health](https://github.com/vikas0105/petclinic/actions/workflows/Build-&-Deploy.yml/badge.svg?event=status)](https://github.com/vikas0105/petclinic/actions/workflows/Build-&-Deploy.yml)
 
-name: Build, Deploy, and Check Application Health
+name: Build, Deploy, and Upload Artifacts
 
 on:
   push:
     branches:
-      - '**'  # Triggers on push to any branch, including feature branches.
+      - '**'
   pull_request:
     branches:
-      - master  # Triggers on PRs to the master branch from feature branches.
+      - master
+  workflow_dispatch:
 
 jobs:
   build:
@@ -76,7 +77,7 @@ jobs:
     - name: Checkout the repository
       uses: actions/checkout@v3
       with:
-        fetch-depth: 0  # Fetch the full history for proper branch handling
+        fetch-depth: 0
 
     - name: Set up Java 17
       uses: actions/setup-java@v3
@@ -96,23 +97,25 @@ jobs:
     - name: Build with Maven
       run: mvn clean install -DskipTests=true
 
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: petclinic-artifacts
+        path: target/
+
     - name: Run Spring Boot application
       run: mvn spring-boot:run &
-      # Run Spring Boot in the background
-
-    - name: Wait for 1 minute (simulate a short-running process)
-      run: sleep 60  # Sleep for 1 minute
+    
+    - name: Wait for 1 minute
+      run: sleep 60
 
     - name: Check application health
       run: |
         echo "Checking application health..."
         curl -s --head http://localhost:8080/actuator/health | head -n 10
-      # Check if the health endpoint is up and responding
 
     - name: Stop Spring Boot application
-      run: |
-        echo "Stopping Spring Boot application..."
-        mvn spring-boot:stop
+      run: mvn spring-boot:stop
 
 
 ===============================================================================================================================================================
@@ -120,82 +123,88 @@ jobs:
 pipeline {
     agent any
 
-    environment {
-        JAVA_HOME = tool name: 'JDK 17', type: 'JDK'
+    options {
+        skipDefaultCheckout() // Skip the default checkout to control repository fetching
     }
 
     stages {
         stage('Checkout') {
             steps {
+                echo 'Checking out repository...'
                 checkout scm
             }
         }
 
-        stage('Set up Java 17') {
+        stage('Set up Environment') {
             steps {
-                script {
-                    // Ensuring that Java 17 is set up
-                    sh 'java -version'
-                }
+                echo 'Setting up Java environment...'
+                sh '''
+                    export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+                    echo "JAVA_HOME=$JAVA_HOME"
+                '''
             }
         }
 
-        stage('Cache Maven dependencies') {
+        stage('Build') {
             steps {
-                cache(path: '.m2/repository', key: "maven-${env.BUILD_ID}") {
-                    sh 'mvn clean install -DskipTests=true'
-                }
-            }
-        }
-
-        stage('Build with Maven') {
-            steps {
+                echo 'Building the application with Maven...'
                 sh 'mvn clean install -DskipTests=true'
             }
         }
 
         stage('Run Spring Boot Application') {
             steps {
-                // Run the Spring Boot application in the background
-                script {
-                    sh 'mvn spring-boot:run &'
-                }
+                echo 'Running Spring Boot application...'
+                sh 'mvn spring-boot:run &'
+                sleep(time: 1, unit: 'MINUTES') // Wait for 1 minute
             }
         }
 
-        stage('Wait for 1 minute') {
+        stage('Check Application Health') {
             steps {
-                // Sleep for 1 minute to allow the app to start and run
-                sleep(time: 1, unit: 'MINUTES')
-            }
-        }
-
-        stage('Check application health') {
-            steps {
-                script {
-                    def healthCheck = sh(script: 'curl -s --head http://localhost:8080/actuator/health | head -n 10', returnStdout: true).trim()
-                    echo "Health check response: ${healthCheck}"
-                }
+                echo 'Checking application health...'
+                sh '''
+                    echo "Fetching health endpoint..."
+                    curl -s --head http://localhost:8080/actuator/health | head -n 10
+                '''
             }
         }
 
         stage('Stop Spring Boot Application') {
             steps {
-                // Stop the Spring Boot application gracefully
-                script {
-                    sh 'mvn spring-boot:stop'
-                }
+                echo 'Stopping Spring Boot application...'
+                sh 'mvn spring-boot:stop'
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                echo 'Archiving build artifacts...'
+                archiveArtifacts artifacts: 'target/**/*', fingerprint: true
+            }
+        }
+
+        stage('Manual Approval') {
+            steps {
+                input message: 'Do you want to proceed?', ok: 'Yes, proceed!'
             }
         }
     }
 
     post {
         always {
-            // Clean up any running processes if needed
-            echo 'Cleaning up.'
+            echo 'Cleaning up workspace...'
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline completed successfully.'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
+
 
 ============================================================================================================================================================================
 
