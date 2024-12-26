@@ -26,6 +26,9 @@ jobs:
         with:
           fetch-depth: 0  # Full history for proper branch handling
 
+      - name: Display GitHub Actor
+        run: echo "The GitHub actor is $GITHUB_ACTOR"
+
       - name: Set up Java 17
         uses: actions/setup-java@v3
         with:
