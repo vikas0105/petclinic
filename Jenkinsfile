@@ -40,7 +40,7 @@ pipeline {
         stage('Upload Artifact') {
             steps {
                 echo 'Uploading artifact...'
-                archiveArtifacts artifacts: 'target/petclinic0.0.1-SNAPSHOT.jar', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'target/petclinic-app-0.0.1-SNAPSHOT.jar', allowEmptyArchive: true
             }
         }
 
@@ -76,8 +76,8 @@ pipeline {
 
         stage('Wait for 5 minutes') {
             steps {
-                echo 'Waiting for 5 minutes...'
-                sleep(time: 5, unit: 'MINUTES')  // Wait for 5 minutes
+                echo 'Waiting for 3 minutes...'
+                sleep(time: 2, unit: 'MINUTES')  // Wait for 2 minutes
             }
         }
 
