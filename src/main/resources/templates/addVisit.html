@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Visit</title>
+</head>
+<body>
+<h1>Add Visit</h1>
+<form th:action="@{/pets/{petId}/visits(id=${visit.petId})}" th:object="${visit}" method="post">
+    <label for="date">Date:</label>
+    <input type="date" id="date" th:field="*{date}" required/><br/>
+
+    <label for="description">Description:</label>
+    <textarea id="description" th:field="*{description}" required></textarea><br/>
+
+    <button type="submit">Add Visit</button>
+</form>
+</body>
+</html>
